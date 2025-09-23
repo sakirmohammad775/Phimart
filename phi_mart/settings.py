@@ -42,10 +42,12 @@ INSTALLED_APPS = [
     'api',
     'users',
     'product',
-    'order'
+    'order',
+    'debug_toolbar'
 ]
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -74,6 +76,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'phi_mart.wsgi.application'
 
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
+]
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
