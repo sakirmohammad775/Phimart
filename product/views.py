@@ -5,6 +5,11 @@ from rest_framework.response import Response
 from product.models import Product, Category
 from product.serializers import ProductSerializer
 
+@api_view()
+def view_products(request):
+    product=Product.objects.select_related('category').all()
+    serializer=ProductSerializer(product,many=True)
+    return Response(serializer.data)
 
 @api_view()
 def view_specific_product(request, id):
