@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from product.models import Product, Category
-from product.serializers import ProductSerializer
+from product.serializers import ProductSerializer,CategorySerializer
 
 @api_view()
 def view_products(request):
@@ -17,9 +17,12 @@ def view_specific_product(request, id):
     serializer=ProductSerializer(product)
     return Response(serializer.data)
 
+@api_view()
+def view_categories(request):
+    return Response({'message':'categories'})
 
 @api_view()
-def view_categories(request,id):
-    product=get_object_or_404(product,pk=id)
-    serializer=ProductSerializer(product)
+def view_specific_categories(request,id):
+    category=get_object_or_404(category,pk=id)
+    serializer=CategorySerializer(category)
     return Response(serializer.data)
