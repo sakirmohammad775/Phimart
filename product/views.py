@@ -21,6 +21,7 @@ def view_specific_product(request, id):
 def view_categories(request):
     return Response({'message':'categories'})
 
+
 @api_view()
 def view_specific_categories(request,id):
     category=get_object_or_404(category,pk=id)
