@@ -14,19 +14,32 @@ def view_products(request):
         product = Product.objects.select_related("category").all()
         serializer = ProductSerializer(product, many=True, context={"request": request})
         return Response(serializer.data)
-    if request.method =="POST":
-        serializer=ProductSerializer(data=request.data)##Deserializer
+    if request.method == "POST":
+        serializer = ProductSerializer(data=request.data)  ##Deserializer
         serializer.is_valid(raise_exception=True)
-        print(serializer.validated_data)
         serializer.save()
-        return Response(serializer.data,status=status.HTTP_201_CREATED)                  
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-@api_view()
+@api_view(["GET", "PUT", "DELETE"])
 def view_specific_product(request, id):
-    product = get_object_or_404(Product, pk=id)
-    serializer = ProductSerializer(product)
-    return Response(serializer.data)
+    if request.method == "GET":
+        product = get_object_or_404(Product, pk=id)
+        serializer = ProductSerializer(product)
+        return Response(serializer.data)
+    if request.method == "PUT":
+        product = get_object_or_404(Product, pk=id)
+        serializer = ProductSerializer(product,data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+    if request.method=='DELETE':
+        product=get_object_or_404(Product,pk=id)
+        copy_of_product=product
+        product.delete()
+        serializer=ProductSerializer(copy_of_product)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+        
 
 
 @api_view()

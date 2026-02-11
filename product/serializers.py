@@ -42,7 +42,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "price",
             "stock",
             "category",
-            "price_with_tax",
+            "price_with_tax",#other
         ]  ## dont use all it contain the sensitive information
 
     price_with_tax = serializers.SerializerMethodField(method_name="calculate_tax")
@@ -57,3 +57,11 @@ class ProductSerializer(serializers.ModelSerializer):
         if price<0:
             raise serializers.ValidationError("Please could not be negative")
         return price
+    
+    # def create(self,validated_data):
+    #     product=Product(**validated_data)
+    #     product.other=1
+    #     product.save()
+    #     return product
+    
+    
