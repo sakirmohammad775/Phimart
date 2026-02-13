@@ -8,7 +8,7 @@ from product.serializers import ProductSerializer, CategorySerializer
 from django.db.models import Count
 from rest_framework.views import APIView
 from rest_framework.mixins import CreateModelMixin, ListModelMixin
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIView
 
 
 class ViewProducts(APIView):
@@ -32,6 +32,20 @@ class ProductList(ListCreateAPIView):
     # def get_serializer_class(self):
     #     return ProductSerializer
 
+class ProductDetails(RetrieveUpdateDestroyAPIView):
+    queryset=Product.objects.all()
+    serializer_class=ProductSerializer
+    lookup_field='id'
+    
+    def delete(self, request, id):
+        product = get_object_or_404(Product, pk=id)
+        if product.stock>10:
+            return Response({"message":"Product with stock more than 10 could not deleted"})
+        product.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+    
 
 class ViewSpecificProduct(APIView):
     def get(self, request, id):
@@ -67,26 +81,6 @@ class ViewCategories(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class ViewSpecificCategory(APIView):
-    def get(self, request, id):
-        category = get_object_or_404(
-            Category.objects.annotate(product_count=Count("products")).all(), pk=id
-        )
-        serializer = CategorySerializer(category)
-        return Response(serializer.data)
-
-    def put(self, request, id):
-        category = get_object_or_404(
-            Category.objects.annotate(product_count=Count("products")).all(), pk=id
-        )
-        serializer = CategorySerializer(category, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-
-    def delete(self, request, id):
-        category = get_object_or_404(
-            Category.objects.annotate(product_count=Count("products")).all(), pk=id
-        )
-        category.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+class CategoryDetails(RetrieveUpdateDestroyAPIView):
+    queryset=Category.objects.annotate(product_count=Count('products')).all()
+    serializer_class=CategorySerializer
