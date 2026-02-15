@@ -1,5 +1,7 @@
 {
     "cSpell.words": [
-        "filterset"
+        "filterset",
+        "paginations",
+        "viewsets"
     ]
 }
