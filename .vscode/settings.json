@@ -3,6 +3,7 @@
         "djoser",
         "filterset",
         "paginations",
+        "simplejwt",
         "viewsets"
     ]
 }
