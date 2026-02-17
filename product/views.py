@@ -8,8 +8,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from product.filters import ProductFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
 from product.paginations import DefaultPagination
-from api.permissions import IsAdminOrReadOnly
-
+from api.permissions import IsAdminOrReadOnly,FullDjangoModelPermission
+from rest_framework.permissions import DjangoModelPermissions,DjangoModelPermissionsOrAnonReadOnly
 
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
@@ -22,6 +22,8 @@ class ProductViewSet(ModelViewSet):
 
     # permission_classes=[IsAdminUser]
     permission_classes=[IsAdminOrReadOnly]
+    #permission_classes=[FullDjangoModelPermission]
+    #permission_classes=[DjangoModelPermissionsOrAnonReadOnly]
     
     
     # def get_permissions(self):
