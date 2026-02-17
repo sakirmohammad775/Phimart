@@ -66,7 +66,7 @@ class ProductSerializer(serializers.ModelSerializer):
     #     return product
 
 
-class SimpleUserSerializer(serializers.ModelField):
+class SimpleUserSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField(method_name="get_current_user_name")
 
     class Meta:
@@ -78,12 +78,17 @@ class SimpleUserSerializer(serializers.ModelField):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-
+    #user=SimpleUserSerializer()
+    user=serializers.SerializerMethodField(method_name='get_user')
+    
     class Meta:
         model = Review
         fields = ["id", "user", "product", "ratings", "comment"]
         read_only_fields = ["user", "product"]
 
+    def get_user(self,obj):
+        return SimpleUserSerializer(obj.user).data
+    
     def create(self, validated_data):
         product_id = self.context["product_id"]
         return Review.objects.create(product_id=product_id, **validated_data)
