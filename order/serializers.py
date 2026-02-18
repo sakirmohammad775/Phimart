@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from order.models import Cart, CartItem
+from order.models import Cart, CartItem,Order,OrderItem
 from product.models import Product
 from product.serializers import ProductSerializer
 
@@ -25,7 +25,7 @@ class AddCartItemSerializer(serializers.ModelSerializer):
         try:
             cart_item = CartItem.objects.get(cart_id=cart_id, product_id=product_id)
             cart_item.quantity += quantity
-            self.instance = cart_item.save()
+            self.instance = cart_item #.save()
         except CartItem.DoesNotExist:
             CartItem.objects.create(cart_id=cart_id, **self.validated_data)
         return self.instance
@@ -41,7 +41,7 @@ class CartItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CartItem
-        fields = ["id", "product", "quantity", "product", "total_price"]
+        fields = ["id", "product", "quantity", "total_price"]
 
     def get_total_price(self, cart_item: CartItem):
         return cart_item.quantity * cart_item.product.price
@@ -62,3 +62,16 @@ class UpdateCartItemSerializer(serializers.ModelSerializer):
     class Meta:
         model=CartItem
         fields=['quantity']
+        
+class OrderItemSerializer(serializers.ModelSerializer):
+    product = SimpleProductSerializer()
+    class Meta:
+        model=OrderItem
+        fields=['id','product','price','quantity','total_price']
+        
+
+class OrderSerializer(serializers.ModelSerializer):
+    items=OrderItemSerializer(many=True)
+    class Meta:
+        model=Order
+        fields=['id','user','status','total_price','created_at','items']
