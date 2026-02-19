@@ -13,9 +13,10 @@ from order.serializers import (
     AddCartItemSerializer,
     UpdateCartItemSerializer,
     OrderSerializer,
-    CreateOrderSerializer
+    CreateOrderSerializer,
+    UpdateOrderSerializer,
 )
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,IsAdminUser
 
 
 class CartViewSet(
@@ -25,11 +26,14 @@ class CartViewSet(
     serializer_class = CartSerializer
     permission_classes = [IsAuthenticated]
 
-    def perform_create(self,serializer):
+    def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-    
+
     def get_queryset(self):
-        return Cart.objects.prefetch_related('items__product').filter(user=self.request.user)
+        return Cart.objects.prefetch_related("items__product").filter(
+            user=self.request.user
+        )
+
 
 class CartItemViewSet(ModelViewSet):
     http_method_names = ["get", "post", "patch", "delete"]
@@ -45,24 +49,36 @@ class CartItemViewSet(ModelViewSet):
         return {"cart_id": self.kwargs["cart_pk"]}
 
     def get_queryset(self):
-        return CartItem.objects.select_related('product').filter(cart_id=self.kwargs["cart_pk"])
+        return CartItem.objects.select_related("product").filter(
+            cart_id=self.kwargs["cart_pk"]
+        )
 
 
 class OrderViewSet(ModelViewSet):
-    permission_classes = [IsAuthenticated]
 
+    http_method_names=['get','post','delete','patch','head','options']
+
+    def get_permissions(self):
+        if self.request.method=='PATCH':
+            return [IsAdminUser()]
+        return [IsAuthenticated()]
+    
     def get_serializer_class(self):
-        if self.request.method=='POST':
+        if self.request.method == "POST":
             return CreateOrderSerializer
+        elif self.request.method == "PATCH":
+            return UpdateOrderSerializer
         return OrderSerializer
-    
+
     def get_serializer_context(self):
-        return {'user_id':self.request.user.id}
-    
+        return {"user_id": self.request.user.id}
+
     def get_queryset(self):
         if self.request.user.is_staff:
-            return Order.objects.prefetch_related('items__product').all()
-        return Order.objects.prefetch_related('items__product').filter(user=self.request.user)
+            return Order.objects.prefetch_related("items__product").all()
+        return Order.objects.prefetch_related("items__product").filter(
+            user=self.request.user
+        )
 
 
 # Create your views here.
