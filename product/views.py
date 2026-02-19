@@ -64,10 +64,10 @@ class ProductImageViewSet(ModelViewSet):
     permission_classes = [IsAdminOrReadOnly]
 
     def perform_create(self, serializer):
-        serializer.save(product_id=self.kwargs["product_pk"])
+        serializer.save(product_id=self.kwargs.get("product_pk"))
 
     def get_queryset(self):
-        return ProductImage.objects.filter(product_id=self.kwargs["product_pk"])
+        return ProductImage.objects.filter(product_id=self.kwargs.get("product_pk"))
 
 
 class CategoryViewSet(ModelViewSet):
@@ -85,9 +85,9 @@ class ReviewViewSet(ModelViewSet):
 
     def perform_update(self, serializer):
         serializer.save(user=self.request.user)
-
+        
     def get_queryset(self):
-        return Review.objects.filter(product_id=self.kwargs["product_pk"])
-
+        return Review.objects.filter(product_id=self.kwargs.get('product_pk'))
+    
     def get_serializer_context(self):
-        return {"product_id": self.kwargs["product_pk"]}
+        return {"product_id": self.kwargs.get("product_pk")}
