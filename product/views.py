@@ -13,13 +13,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from product.filters import ProductFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
 from product.paginations import DefaultPagination
-from api.permissions import IsAdminOrReadOnly, FullDjangoModelPermission
-from rest_framework.permissions import (
-    DjangoModelPermissions,
-    DjangoModelPermissionsOrAnonReadOnly,
-)
+from api.permissions import IsAdminOrReadOnly
 from product.permissions import IsReviewAuthorOrReadonly
 from product.models import ProductImage
+from drf_yasg.utils import swagger_auto_schema
 
 
 
@@ -41,9 +38,22 @@ class ProductViewSet(ModelViewSet):
     ordering_filter = ["price", "updated_at"]
     permission_classes = [IsAdminOrReadOnly]
     
+    @swagger_auto_schema(
+        operation_summary='Retrive a list of products'
+    )
     def list(self, request, *args, **kwargs):
         """Retrive all the Product"""
         return super().list(request, *args, **kwargs)
+    
+    @swagger_auto_schema(
+        operation_summary="Create a product by admin",
+        operation_description="This allow an admin to create a product",
+        request_body=ProductSerializer,
+        responses={
+            201: ProductSerializer,
+            400: "Bad Request"
+        }
+    )
     
     def create(self, request, *args, **kwargs):
         """Only authenticated admin can create product"""
