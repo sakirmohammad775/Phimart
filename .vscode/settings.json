@@ -6,6 +6,7 @@
         "paginations",
         "Phimart",
         "redoc",
+        "Retrive",
         "simplejwt",
         "viewsets",
         "yasg"
