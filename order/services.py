@@ -33,23 +33,23 @@ class OrderService:
 
             return order
 
-    # @staticmethod
-    # def cancel_order(order, user):
-    #     if user.is_staff:
-    #         order.status = Order.CANCELED
-    #         order.save()
-    #         return order
+    @staticmethod
+    def cancel_order(order, user):
+        if user.is_staff:
+            order.status = Order.CANCELED
+            order.save()
+            return order
 
-    #     if order.user != user:
-    #         raise PermissionDenied(
-    #             {"detail": "You can only cancel your own order"})
+        if order.user != user:
+            raise PermissionDenied(
+                {"detail": "You can only cancel your own order"})
 
-    #     if order.status == Order.DELIVERED:
-    #         raise ValidationError({"detail": "You can not cancel an order"})
+        if order.status == Order.DELIVERED:
+            raise ValidationError({"detail": "You can not cancel an order"})
 
-    #     order.status = Order.CANCELED
-    #     order.save()
-    #     return order
+        order.status = Order.CANCELED
+        order.save()
+        return order
 
 
 """

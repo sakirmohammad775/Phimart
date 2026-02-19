@@ -6,6 +6,9 @@ from rest_framework.mixins import (
     DestroyModelMixin,
     ListModelMixin,
 )
+from order import serializers as orderSz
+from rest_framework.response import Response
+from rest_framework.decorators import action
 from order.models import Cart, CartItem, Order, OrderItem
 from order.serializers import (
     CartSerializer,
@@ -17,7 +20,7 @@ from order.serializers import (
     UpdateOrderSerializer,
 )
 from rest_framework.permissions import IsAuthenticated,IsAdminUser
-
+from order.services import OrderService
 
 class CartViewSet(
     CreateModelMixin, DestroyModelMixin, GenericViewSet, RetrieveModelMixin
@@ -58,20 +61,37 @@ class OrderViewSet(ModelViewSet):
 
     http_method_names=['get','post','delete','patch','head','options']
 
+    @action(detail=True, methods=['post'])
+    def cancel(self, request, pk=None):
+        order = self.get_object()
+        OrderService.cancel_order(order=order, user=request.user)
+        return Response({'status': 'Order canceled'})
+
+    @action(detail=True, methods=['patch'])
+    def update_status(self, request, pk=None):
+        order = self.get_object()
+        serializer = orderSz.UpdateOrderSerializer(
+            order, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({'status': f'Order status updated to {request.data['status']}'})
+    
     def get_permissions(self):
-        if self.request.method=='PATCH':
+        if self.action in ['update_status','destroy']:
             return [IsAdminUser()]
         return [IsAuthenticated()]
     
     def get_serializer_class(self):
-        if self.request.method == "POST":
-            return CreateOrderSerializer
-        elif self.request.method == "PATCH":
-            return UpdateOrderSerializer
-        return OrderSerializer
+        if self.action=='cancel':
+            return orderSz.EmptySerializer
+        if self.action == "create":
+            return orderSz.CreateOrderSerializer
+        elif self.action == "update_status":
+            return orderSz.UpdateOrderSerializer
+        return orderSz.OrderSerializer
 
     def get_serializer_context(self):
-        return {"user_id": self.request.user.id}
+        return {"user_id": self.request.user.id,'user':self.request.user}
 
     def get_queryset(self):
         if self.request.user.is_staff:

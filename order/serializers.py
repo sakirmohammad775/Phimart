@@ -4,6 +4,8 @@ from product.models import Product
 from product.serializers import ProductSerializer
 from order.services import OrderService
 
+class EmptySerializer(serializers.Serializer):
+    pass
 
 class SimpleProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -103,6 +105,8 @@ class UpdateOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model=Order
         fields=['status']
+    
+    
 
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True)
