@@ -8,11 +8,15 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ["id", "name", "description", "product_count"]
-
     product_count = serializers.IntegerField(read_only=True)
 
+class ProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=ProductImage
+        fields=['id','image']
 
 class ProductSerializer(serializers.ModelSerializer):
+    images=ProductImageSerializer(many=True,read_only=True )
     class Meta:
         model = Product
         fields = [
@@ -22,7 +26,9 @@ class ProductSerializer(serializers.ModelSerializer):
             "price",
             "stock",
             "category",
-            "price_with_tax",  # other
+            "price_with_tax", 
+            "images"
+            # other
         ]  ## dont use all it contain the sensitive information
 
     price_with_tax = serializers.SerializerMethodField(method_name="calculate_tax")
@@ -39,10 +45,7 @@ class ProductSerializer(serializers.ModelSerializer):
         return price
 
 
-class ProductImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=ProductImage
-        fields=['id','image']
+
 
 class SimpleUserSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField(method_name="get_current_user_name")
