@@ -1,6 +1,7 @@
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
 token.json
 .phi_env
 db.sqlite3
