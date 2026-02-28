@@ -166,7 +166,7 @@ STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # STATIC_FILES_DIR = BASE_DIR / "static"
-STATICFILES_STORAGE="whitenoise.storage.CompressedStaticFilesStorage"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
@@ -192,9 +192,13 @@ SIMPLE_JWT = {
 }
 
 DJOSER = {
-    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': 'activate/{uid}/{token}',
-    'SEND_ACTIVATION_EMAIL': True,
+    "EMAIL_FRONTEND_PROTOCOL": config("FRONTED_PROTOCOL"),  ## add frontend url
+    "EMAIL_FRONTED_DOMAIN":config('FRONTED_DOMAIN'),  ## add frontend url last
+    "EMAIL_FRONTEND_SITE_NAME":'Phimart',  ## add frontend url
+    
+    "PASSWORD_RESET_CONFIRM_URL": "#/password/reset/confirm/{uid}/{token}",
+    "ACTIVATION_URL": "activate/{uid}/{token}",
+    "SEND_ACTIVATION_EMAIL": True,
     "SERIALIZERS": {
         "user_create": "users.serializers.UserCreateSerializer",
         "current_user": "users.serializers.UserSerializer",
