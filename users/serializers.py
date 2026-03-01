@@ -7,4 +7,4 @@ class UserCreateSerializer(BaseUserCreateSerializer):
 class UserSerializer(BaseUserSerializer):
     class Meta(BaseUserCreateSerializer.Meta):
         ref_name='CustomUser'
-        fields=['id','email','first_name','last_name','address','phone_number']
+        fields=['id','email','first_name','last_name','address','phone_number','is_staff']
