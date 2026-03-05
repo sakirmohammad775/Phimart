@@ -161,7 +161,6 @@ def initiate_payment(request):
     post_body['product_name'] = "E-commerce Products"
     post_body['product_category'] = "General"
     post_body['product_profile'] = "general"
-    post_body['ship_name'] = f"{user.first_name} {user.last_name}"
 
     response = sslcz.createSession(post_body) # API response
     
