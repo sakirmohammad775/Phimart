@@ -192,8 +192,8 @@ SIMPLE_JWT = {
 }
 
 DJOSER = {
-    "EMAIL_FRONTEND_PROTOCOL": config("FRONTED_PROTOCOL"),  ## add frontend url
-    "EMAIL_FRONTED_DOMAIN":config('FRONTED_DOMAIN'),  ## add frontend url last
+    "EMAIL_FRONTEND_PROTOCOL": config("FRONTEND_PROTOCOL"),  ## add frontend url
+    "EMAIL_FRONTEND_DOMAIN":config('FRONTEND_DOMAIN'),  ## add frontend url last
     "EMAIL_FRONTEND_SITE_NAME":'Phimart',  ## add frontend url
     
     "PASSWORD_RESET_CONFIRM_URL": "#/password/reset/confirm/{uid}/{token}",
@@ -223,3 +223,6 @@ EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool)
 EMAIL_PORT = config("EMAIL_PORT")
 EMAIL_HOST_USER = config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+
+BACKEND_URL=config("BACKEND_URL")
+FRONTEND_URL=config("FRONTEND_URL")
