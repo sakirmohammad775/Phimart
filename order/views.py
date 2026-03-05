@@ -170,15 +170,26 @@ def initiate_payment(request):
     return Response({"error":"Payment initiation failed"},status=status.HTTP_400_BAD_REQUEST)
     
     
+# @api_view(['POST'])
+# def payment_success(request):
+#     print("Inside success")
+#     print("Transaction Id",request.data.get("tran_id").split('_')[1])
+#     order_id = request.data.get("tran_id").split('_')[1]
+#     print(order_id)
+#     order = Order.objects.get(id=order_id)
+#     order.status = "Ready To Ship"
+#     order.save()
+#     return redirect(f"{main_settings.FRONTEND_URL}/dashboard/orders/")
+
 @api_view(['POST'])
 def payment_success(request):
     print("Inside success")
-    order_id = request.data.get("tran_id").split('_')[1]
+    tran_id = request.POST.get("tran_id")
+    order_id = tran_id.split(" ")[1]
     order = Order.objects.get(id=order_id)
     order.status = "Ready To Ship"
     order.save()
-    return redirect(f"{main_settings.FRONTEND_URL}/dashboard/orders/")
-
+    return HttpResponseRedirect(f"{main_settings.FRONTEND_URL}/dashboard/orders/")
 
 @api_view(['POST'])
 def payment_cancel(request):
